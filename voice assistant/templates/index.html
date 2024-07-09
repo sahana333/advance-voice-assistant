@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice Assistant</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Voice Assistant</h1>
+        <input type="text" id="query" placeholder="Type your query here..." />
+        <button onclick="processText()">Send</button>
+        <button onclick="listen()">Listen</button>
+        <p id="response"></p>
+    </div>
+    <script>
+        function processText() {
+            const query = document.getElementById('query').value;
+            console.log("Processing text:", query);
+            $.ajax({
+                url: '/process_text',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ query: query }),
+                success: function(data) {
+                    console.log("Response:", data);
+                    document.getElementById('response').innerText = data.response;
+                },
+                error: function(err) {
+                    console.error("Error:", err);
+                    document.getElementById('response').innerText = "There was an error processing your request.";
+                }
+            });
+        }
+
+        function listen() {
+            console.log("Listening for speech...");
+            $.ajax({
+                url: '/listen',
+                type: 'POST',
+                success: function(data) {
+                    console.log("Response:", data);
+                    document.getElementById('response').innerText = data.response;
+                },
+                error: function(err) {
+                    console.error("Error:", err);
+                    document.getElementById('response').innerText = "There was an error processing your request.";
+                }
+            });
+        }
+    </script>
+</body>
+</html>
